@@ -1,278 +1,572 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About You — Memories</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<title>About You ♡</title>
 
 <style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:#08090d;
-  color:#f5f1ec;
-  font-family:'Cormorant Garamond',serif;
-  text-align:center;
+* {
+  box-sizing: border-box;
 }
-.page{
-  width:min(100%,440px);
-  margin:auto;
-  min-height:100vh;
-  padding:28px 22px 40px;
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  background: #080910;
+  overflow-x: hidden;
 }
-.small{
-  font:10px Arial,sans-serif;
-  letter-spacing:4px;
-  color:#aaa6b5;
-  text-transform:uppercase;
+
+button {
+  cursor: pointer;
+  color: white;
+  border: none;
 }
-h1{
-  font-size:43px;
-  font-weight:400;
-  font-style:italic;
-  margin:12px 0 4px;
+
+#background {
+  position: fixed;
+  inset: -30px;
+  z-index: -3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  filter: blur(8px) brightness(.34);
+  transform: scale(1.08);
+  overflow: hidden;
 }
-.subtitle{
-  color:#aaa6b5;
-  font-size:17px;
-  margin-bottom:26px;
+
+.bg-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: moveUp 28s linear infinite;
 }
-.cover{
-  width:min(100%,290px);
-  aspect-ratio:1;
-  object-fit:cover;
-  border-radius:4px;
-  box-shadow:0 10px 45px #000;
+
+.bg-column:nth-child(2) {
+  animation-duration: 36s;
+  animation-direction: reverse;
 }
-.song{
-  font-size:25px;
-  margin:20px 0 3px;
+
+.bg-column:nth-child(3) {
+  animation-duration: 32s;
 }
-.artist{
-  font:12px Arial,sans-serif;
-  color:#aaa6b5;
+
+.bg-column img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px;
 }
-.controls{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:25px;
-  margin:22px 0;
+
+@keyframes moveUp {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
 }
-.play{
-  width:58px;
-  height:58px;
-  border-radius:50%;
-  border:0;
-  background:#f5f1ec;
-  color:#101016;
-  font-size:23px;
-  cursor:pointer;
+
+.shade {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: linear-gradient(
+    180deg,
+    rgba(4,5,12,.5),
+    rgba(4,5,12,.75),
+    rgba(4,5,12,.9)
+  );
 }
-.minor{
-  border:0;
-  background:transparent;
-  color:#eee;
-  font-size:23px;
-  cursor:pointer;
+
+#intro {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background: #090a10;
+  transition: opacity .8s ease, visibility .8s ease;
 }
-audio{width:100%;height:34px}
-.line{
-  height:1px;
-  background:#292832;
-  margin:30px 0;
+
+#intro.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
-.section-title{
-  font-size:29px;
-  font-style:italic;
-  font-weight:400;
-  margin:0 0 8px;
+
+.cover-card {
+  width: min(100%, 360px);
+  text-align: left;
 }
-.description{
-  font-size:16px;
-  line-height:1.6;
-  color:#bdb8c5;
-  margin:0 0 20px;
+
+.cover {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 12px 50px #000;
 }
-.gallery{
-  display:flex;
-  overflow-x:auto;
-  gap:12px;
-  scroll-snap-type:x mandatory;
-  padding:4px 0 14px;
+
+.cover-info {
+  margin-top: 22px;
 }
-.gallery img{
-  width:78%;
-  flex-shrink:0;
-  height:350px;
-  object-fit:cover;
-  border-radius:3px;
-  scroll-snap-align:center;
-  background:#171720;
+
+.cover-info h1 {
+  margin: 0 0 8px;
+  font-size: 27px;
+  letter-spacing: 1px;
 }
-.note{
-  font-size:20px;
-  font-style:italic;
-  line-height:1.65;
-  color:#d6d0dc;
-  padding:8px 4px;
+
+.cover-info p {
+  color: #b9bac6;
+  margin: 0;
 }
-.footer{
-  font:10px Arial,sans-serif;
-  letter-spacing:3px;
-  color:#85808e;
-  margin-top:30px;
+
+.cover-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+#playMain {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: white;
+  color: #101116;
+  font-size: 27px;
+  box-shadow: 0 0 25px #ffffff25;
+}
+
+.hint {
+  color: #aaaab8;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+#miniPlayer {
+  position: fixed;
+  z-index: 10;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid #ffffff20;
+  border-radius: 14px;
+  background: #11121bd9;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 5px 25px #0005;
+}
+
+#miniPlayer.show {
+  display: flex;
+}
+
+#miniCover {
+  width: 43px;
+  height: 43px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-info strong {
+  display: block;
+  font-size: 13px;
+}
+
+.track-info small {
+  color: #b8b8c5;
+  font-size: 11px;
+}
+
+#miniPlay {
+  background: transparent;
+  font-size: 22px;
+  padding: 8px;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 100px 20px 35px;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #c5c5d2;
+  font-size: 10px;
+  letter-spacing: 5px;
+  margin-bottom: 22px;
+}
+
+.photo-frame {
+  width: min(78vw, 330px);
+  aspect-ratio: 4 / 5;
+  padding: 7px;
+  border: 1px solid #ffffff50;
+  border-radius: 5px;
+  background: #ffffff10;
+  box-shadow: 0 15px 60px #0008;
+  overflow: hidden;
+}
+
+#memoryPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity .5s ease;
+}
+
+#memoryText {
+  margin-top: 27px;
+  max-width: 340px;
+  min-height: 58px;
+  font-size: clamp(17px, 5vw, 23px);
+  line-height: 1.6;
+  font-weight: 300;
+  letter-spacing: .5px;
+  text-shadow: 0 2px 12px #000;
+}
+
+#memorySub {
+  color: #c2c1ce;
+  font-size: 11px;
+  letter-spacing: 3px;
+  margin-top: 12px;
+}
+
+.progress-area {
+  width: min(80vw, 320px);
+  margin-top: 25px;
+}
+
+.progress-track {
+  height: 3px;
+  border-radius: 5px;
+  background: #ffffff35;
+  overflow: hidden;
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: white;
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  color: #c7c7d2;
+  font-size: 10px;
+  margin-top: 7px;
+}
+
+footer {
+  color: #aaaab8;
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-top: 35px;
+}
+
+@media (max-width: 380px) {
+  .cover-card { width: min(100%, 310px); }
+  .cover-info h1 { font-size: 23px; }
+  main { padding-top: 95px; }
 }
 </style>
 </head>
 
 <body>
-<main class="page">
 
-  <p class="small">A LITTLE COLLECTION OF MEMORIES</p>
-  <h1>About You</h1>
-  <p class="subtitle">somewhere in time, forever in memory.</p>
+<div id="background">
+  <div class="bg-column" id="bg1"></div>
+  <div class="bg-column" id="bg2"></div>
+  <div class="bg-column" id="bg3"></div>
+</div>
+<div class="shade"></div>
 
-  <!-- COVER ALBUM -->
-  <img class="cover"
-       src="IMG-20261001-WA0014.jpg"
-       alt="Cover About You">
+<!-- HALAMAN PEMBUKA -->
+<section id="intro">
+  <div class="cover-card">
+    <img
+      class="cover"
+      src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg"
+      alt="Cover About You"
+    >
 
-  <div class="song">About You</div>
-  <div class="artist">The 1975 · a song for the memories</div>
+    <div class="cover-info">
+      <h1>About You</h1>
+      <p>The 1975 · A song for our memories</p>
+    </div>
 
-  <div class="controls">
-    <button class="minor" onclick="restartMusic()" aria-label="Ulangi lagu">↺</button>
-    <button class="play" id="playBtn" onclick="toggleMusic()" aria-label="Putar musik">▶</button>
-    <button class="minor" onclick="toggleMute()" aria-label="Senyap">♫</button>
+    <div class="cover-controls">
+      <div class="hint">PRESS PLAY TO BEGIN ♡</div>
+      <button id="playMain" aria-label="Play music">▶</button>
+    </div>
+  </div>
+</section>
+
+<!-- PEMUTAR MUSIK KECIL -->
+<div id="miniPlayer">
+  <img
+    id="miniCover"
+    src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg"
+    alt="Cover"
+  >
+  <div class="track-info">
+    <strong>About You</strong>
+    <small>The 1975 · Our memories</small>
+  </div>
+  <button id="miniPlay" aria-label="Pause or play">Ⅱ</button>
+</div>
+
+<audio id="music" preload="metadata">
+  <source src="ssstik.io_1792058518920.mp3" type="audio/mpeg">
+</audio>
+
+<!-- HALAMAN KENANGAN -->
+<main>
+  <div class="eyebrow">A LITTLE PIECE OF US</div>
+
+  <div class="photo-frame">
+    <img id="memoryPhoto"
+      src="IMG-20261001-WA0014.jpg"
+      alt="Foto kenangan">
   </div>
 
-  <!-- GANTI NAMA FILE JIKA MUSIKMU BERBEDA -->
-  <audio id="music" preload="metadata">
-    <source src="ssstik.io_1792058518920.mp3" type="audio/mpeg">
-  </audio>
+  <div id="memoryText">I</div>
+  <div id="memorySub">SOMEWHERE IN MY HEART ♡</div>
 
-  <p class="small">PRESS PLAY & REMEMBER</p>
-
-  <div class="line"></div>
-
-  <!-- GALERI KENANGAN -->
-  <h2 class="section-title">Little Moments</h2>
-  <p class="description">
-    A collection of places, little moments, and memories
-    I wish I could visit one more time.
-  </p>
-
-  <div class="gallery">
-    <img src="IMG_20261015_175351.jpg" alt="Memory 1">
-    <img src="IMG_20261015_175454.jpg" alt="Memory 2">
-    <img src="IMG_20261015_175711.jpg" alt="Memory 3">
-    <img src="IMG_20261015_175557.jpg" alt="Memory 4">
-    <img src="motion_photo_4054923047229003049.jpg" alt="Memory 5">
-    <img src="IMG-20260914-WA0053.jpg" alt="Memory 6">
-    <img src="lv_0_20261002210535.jpg" alt="Memory 7">
+  <div class="progress-area">
+    <div class="progress-track">
+      <div id="progress"></div>
+    </div>
+    <div class="time-row">
+      <span id="currentTime">0:00</span>
+      <span id="totalTime">0:00</span>
+    </div>
   </div>
 
-  <p class="small">← SWIPE TO SEE MORE →</p>
-
-  <div class="line"></div>
-
-  <!-- CERITA -->
-  <h2 class="section-title">A Journey to Remember</h2>
-  <p class="description">
-    Mount Slamet · Bambangan
-  </p>
-
-  <div class="note">
-    Some journeys stay with us long after they end.
-    The cold air, the long way up, the laughter with friends,
-    and the moment we finally reached the summit.
-    <br><br>
-    Maybe the best part was never only the destination,
-    but every little moment along the way.
-  </div>
-
-  <div class="line"></div>
-
-  <!-- MANIFESTASI -->
-  <h2 class="section-title">Someday, Somewhere</h2>
-
-  <div class="note">
-    The world is wide, and my story is far from over.
-  </div>
-
-  <p class="description">
-    Suatu hari nanti, aku akan menginjakkan kaki di tempat-tempat
-    indah di berbagai penjuru dunia. Aku akan menciptakan banyak
-    kenangan baik di setiap perjalanan, mengabadikan momen,
-    dan menyimpannya dengan rapi dalam foto maupun cerita.
-    <br><br>
-    Bukan semata untuk dipamerkan, tetapi sebagai pengingat
-    bahwa mimpi-mimpi yang pernah kutuliskan hari ini
-    benar-benar bisa menjadi nyata.
-  </p>
-
-  <div class="line"></div>
-
-  <h2 class="section-title">Dear Future Me</h2>
-  <p class="description">
-    Semoga kita masih menjadi seseorang yang berani bermimpi,
-    berani melangkah, dan tidak lupa menikmati perjalanan
-    di tengah kesibukan mengejar tujuan.
-    <br><br>
-    Teruslah berjalan. Masih banyak cerita yang belum ditulis.
-  </p>
-
-  <div class="line"></div>
-
-  <!-- PEMUTAR MUSIK KEDUA -->
-  <h2 class="section-title">Another Little Soundtrack</h2>
-  <p class="description">A song to keep another memory alive.</p>
-
-  <!-- Unggah lagu kedua dengan nama musik-kedua.mp3 -->
-  <audio controls preload="metadata">
-    <source src="musik-kedua.mp3" type="audio/mpeg">
-    Browser kamu tidak mendukung pemutar audio.
-  </audio>
-
-  <p class="footer">MADE OF MOMENTS & MEMORIES</p>
+  <footer>MADE WITH LOVE ♡</footer>
 </main>
 
 <script>
-const music = document.getElementById('music');
-const playBtn = document.getElementById('playBtn');
+const coverFile =
+  "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg";
 
-function toggleMusic(){
-  if(music.paused){
-    music.play().then(()=>{
-      playBtn.textContent='Ⅱ';
-    }).catch(()=>{
-      alert('Musik belum bisa diputar. Periksa apakah file MP3 sudah diunggah ke repositori.');
-    });
-  }else{
-    music.pause();
-    playBtn.textContent='▶';
+const photos = [
+  "IMG-20261001-WA0014.jpg",
+  "IMG_20261015_175351.jpg",
+  "IMG_20261015_175454.jpg",
+  "IMG_20261015_175711.jpg",
+  "IMG_20261015_175557.jpg",
+  "motion_photo_4054923047229003049.jpg",
+  "IMG-20260914-WA0053.jpg",
+  "file_000000000e6882119543a0ec86ebf88b.png",
+  "lv_0_20261002210535.jpg"
+];
+
+const music = document.getElementById("music");
+const intro = document.getElementById("intro");
+const miniPlayer = document.getElementById("miniPlayer");
+const playMain = document.getElementById("playMain");
+const miniPlay = document.getElementById("miniPlay");
+const memoryPhoto = document.getElementById("memoryPhoto");
+const memoryText = document.getElementById("memoryText");
+const memorySub = document.getElementById("memorySub");
+const progress = document.getElementById("progress");
+const currentTime = document.getElementById("currentTime");
+const totalTime = document.getElementById("totalTime");
+
+let started = false;
+let currentMoment = -1;
+
+/* Latar belakang bergerak */
+["bg1", "bg2", "bg3"].forEach((id, columnIndex) => {
+  const column = document.getElementById(id);
+  const list = [...photos, ...photos];
+
+  list.forEach((file, index) => {
+    const img = document.createElement("img");
+    img.src = file;
+    img.alt = "";
+    img.loading = "lazy";
+    column.appendChild(img);
+  });
+});
+
+/*
+  Waktu menggunakan detik dari awal lagu.
+  Foto berganti sesuai daftar momen.
+*/
+const moments = [
+  {
+    time: 0,
+    photo: 0,
+    text: "I",
+    sub: "SOMEWHERE IN MY HEART ♡"
+  },
+  {
+    time: 2,
+    photo: 1,
+    text: "know a place",
+    sub: "A PLACE I REMEMBER"
+  },
+  {
+    time: 11,
+    photo: 2,
+    text: "It's somewhere I go when I need to remember your face",
+    sub: "EVERY LITTLE MEMORY ♡"
+  },
+  {
+    time: 17,
+    photo: 3,
+    text: "We get married in our heads",
+    sub: "SOMEWHERE IN OUR DREAMS"
+  },
+  {
+    time: 30,
+    photo: 4,
+    text: "Something to do while we try to recall how we met",
+    sub: "BACK TO WHERE IT BEGAN"
+  },
+  {
+    time: 40,
+    photo: 5,
+    text: "Do you think I have forgotten?",
+    sub: "I STILL REMEMBER ♡"
+  },
+  {
+    time: 44,
+    photo: 6,
+    text: "Do you think I have forgotten?",
+    sub: "NOT A SINGLE MEMORY"
+  },
+  {
+    time: 50,
+    photo: 7,
+    text: "Do you think I have forgotten about you?",
+    sub: "ABOUT YOU ♡"
+  },
+  {
+    time: 60,
+    photo: 8,
+    text: "Some memories never really leave.",
+    sub: "YOU WILL ALWAYS BE A PART OF MY STORY"
+  }
+];
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return mins + ":" + String(secs).padStart(2, "0");
+}
+
+function showMoment(index) {
+  if (index < 0 || index === currentMoment) return;
+
+  currentMoment = index;
+  const moment = moments[index];
+
+  memoryPhoto.style.opacity = "0";
+  memoryText.style.opacity = "0";
+
+  setTimeout(() => {
+    memoryPhoto.src = photos[moment.photo];
+    memoryText.textContent = moment.text;
+    memorySub.textContent = moment.sub;
+
+    memoryPhoto.style.opacity = "1";
+    memoryText.style.opacity = "1";
+  }, 250);
+}
+
+function updateMoment() {
+  const time = music.currentTime;
+  let index = 0;
+
+  for (let i = 0; i < moments.length; i++) {
+    if (time >= moments[i].time) index = i;
+  }
+
+  showMoment(index);
+}
+
+async function startMusic() {
+  try {
+    await music.play();
+    started = true;
+    intro.classList.add("hide");
+    miniPlayer.classList.add("show");
+    miniPlay.textContent = "Ⅱ";
+  } catch (error) {
+    alert("Musik belum bisa diputar. Cek apakah file MP3 sudah di-upload dengan nama yang benar.");
   }
 }
 
-function restartMusic(){
-  music.currentTime=0;
-  music.play().then(()=>{
-    playBtn.textContent='Ⅱ';
-  }).catch(()=>{
-    alert('Periksa file musik di repositori GitHub.');
-  });
-}
+playMain.addEventListener("click", startMusic);
 
-function toggleMute(){
-  music.muted=!music.muted;
-}
+miniPlay.addEventListener("click", async () => {
+  if (music.paused) {
+    try {
+      await music.play();
+    } catch (error) {
+      alert("Musik belum bisa diputar.");
+    }
+  } else {
+    music.pause();
+  }
+});
 
-music.addEventListener('ended',()=>{
-  playBtn.textContent='▶';
+music.addEventListener("play", () => {
+  miniPlay.textContent = "Ⅱ";
+});
+
+music.addEventListener("pause", () => {
+  miniPlay.textContent = "▶";
+});
+
+music.addEventListener("timeupdate", () => {
+  updateMoment();
+
+  if (music.duration && Number.isFinite(music.duration)) {
+    progress.style.width =
+      (music.currentTime / music.duration * 100) + "%";
+
+    currentTime.textContent = formatTime(music.currentTime);
+    totalTime.textContent = formatTime(music.duration);
+  }
+});
+
+music.addEventListener("loadedmetadata", () => {
+  totalTime.textContent = formatTime(music.duration);
+});
+
+music.addEventListener("ended", () => {
+  miniPlay.textContent = "▶";
+});
+
+music.addEventListener("error", () => {
+  console.log("Periksa nama dan lokasi file MP3 di repositori.");
 });
 </script>
+
 </body>
 </html>
