@@ -4,311 +4,298 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About You ♡</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap">
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
 
 body {
   margin: 0;
-  min-height: 100vh;
   font-family: Arial, sans-serif;
   color: white;
-  background: #080910;
-  overflow-x: hidden;
-}
-
-button {
-  cursor: pointer;
-  color: white;
-  border: none;
-}
-
-#background {
-  position: fixed;
-  inset: -30px;
-  z-index: -3;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  filter: blur(8px) brightness(.34);
-  transform: scale(1.08);
+  background: #050508;
   overflow: hidden;
 }
 
-.bg-column {
+button { cursor: pointer; color: white; border: none; }
+
+/* ============ LATAR FILM MIRING ============ */
+.film-container {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 250%; height: 250%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  z-index: -3;
+  pointer-events: none;
+  animation: throbBlur 5s ease-in-out infinite alternate;
+}
+
+@keyframes throbBlur {
+  0%   { filter: blur(.5px) brightness(.5);  transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+  100% { filter: blur(2px)  brightness(.8);  transform: translate(-50%, -50%) rotate(-12deg) scale(1.02); }
+}
+
+#film-bg {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  animation: moveUp 28s linear infinite;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%; height: 100%;
+  animation: scrollFilm 60s linear infinite;
 }
 
-.bg-column:nth-child(2) {
-  animation-duration: 36s;
-  animation-direction: reverse;
-}
-
-.bg-column:nth-child(3) {
-  animation-duration: 32s;
-}
-
-.bg-column img {
-  width: 100%;
-  height: 210px;
+.bg-roll-img {
+  width: 150px; height: 200px;
   object-fit: cover;
   border-radius: 8px;
+  transition: opacity .8s ease, transform .8s ease;
 }
 
-@keyframes moveUp {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
+.bg-roll-img.missing-from-roll { opacity: 0; transform: scale(.5); }
+
+@keyframes scrollFilm {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-20%); }
 }
 
 .shade {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background: linear-gradient(
-    180deg,
-    rgba(4,5,12,.5),
-    rgba(4,5,12,.75),
-    rgba(4,5,12,.9)
-  );
+  position: fixed; inset: 0; z-index: -2;
+  background: radial-gradient(circle, rgba(15,15,20,.25) 0%, rgba(5,5,8,.95) 100%);
 }
 
+/* ============ HALAMAN PEMBUKA ============ */
 #intro {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; justify-content: center; align-items: center;
   padding: 24px;
   background: #090a10;
   transition: opacity .8s ease, visibility .8s ease;
 }
+#intro.hide { opacity: 0; visibility: hidden; pointer-events: none; }
 
-#intro.hide {
-  opacity: 0;
-  visibility: hidden;
+.cover-card { width: min(100%, 360px); text-align: left; }
+
+.cover-wrap { position: relative; overflow: hidden; box-shadow: 0 12px 50px #000; }
+.cover { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+
+.shimmer {
+  position: absolute; top: 0; left: -150%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,.4), transparent);
+  transform: skewX(-25deg);
+  animation: sweepShine 3.5s infinite;
   pointer-events: none;
 }
 
-.cover-card {
-  width: min(100%, 360px);
-  text-align: left;
+@keyframes sweepShine {
+  0% { left: -150%; }
+  50%, 100% { left: 200%; }
 }
 
-.cover {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-  box-shadow: 0 12px 50px #000;
-}
+.cover-info { margin-top: 22px; }
+.cover-info h1 { margin: 0 0 8px; font-size: 27px; letter-spacing: 1px; }
+.cover-info p { color: #b9bac6; margin: 0; }
 
-.cover-info {
-  margin-top: 22px;
-}
-
-.cover-info h1 {
-  margin: 0 0 8px;
-  font-size: 27px;
-  letter-spacing: 1px;
-}
-
-.cover-info p {
-  color: #b9bac6;
-  margin: 0;
-}
-
-.cover-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 24px;
-}
+.cover-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
 
 #playMain {
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  background: white;
-  color: #101116;
-  font-size: 27px;
+  width: 62px; height: 62px; border-radius: 50%;
+  background: white; color: #101116; font-size: 30px;
+  display: grid; place-items: center;
   box-shadow: 0 0 25px #ffffff25;
 }
 
-.hint {
-  color: #aaaab8;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
+.hint { color: #aaaab8; font-size: 12px; letter-spacing: 1px; }
 
+.credit {
+  position: absolute; left: 0; right: 0; bottom: 8%;
+  text-align: center;
+  font-family: 'Satisfy', cursive;
+  font-size: 24px;
+  color: rgba(255,255,255,.9);
+  text-shadow: 0 0 12px rgba(255,255,255,.6);
+}
+.cursor { animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* ============ PEMUTAR KECIL ============ */
 #miniPlayer {
-  position: fixed;
-  z-index: 10;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  display: none;
-  align-items: center;
-  gap: 10px;
+  position: fixed; z-index: 10;
+  top: 12px; left: 12px; right: 12px;
+  display: none; align-items: center; gap: 10px;
   padding: 9px 12px;
-  border: 1px solid #ffffff20;
-  border-radius: 14px;
+  border: 1px solid #ffffff20; border-radius: 14px;
   background: #11121bd9;
   backdrop-filter: blur(15px);
   box-shadow: 0 5px 25px #0005;
 }
+#miniPlayer.show { display: flex; animation: dropIn .8s cubic-bezier(.25,1,.3,1); }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-30px) scale(.9); } to { opacity: 1; transform: none; } }
 
-#miniPlayer.show {
-  display: flex;
-}
+#miniCover { width: 43px; height: 43px; object-fit: cover; border-radius: 5px; }
+.track-info { flex: 1; min-width: 0; }
+.track-info strong { display: block; font-size: 13px; }
+.track-info small { color: #b8b8c5; font-size: 11px; }
+#miniPlay { background: transparent; font-size: 22px; padding: 8px; }
 
-#miniCover {
-  width: 43px;
-  height: 43px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.track-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.track-info strong {
-  display: block;
-  font-size: 13px;
-}
-
-.track-info small {
-  color: #b8b8c5;
-  font-size: 11px;
-}
-
-#miniPlay {
-  background: transparent;
-  font-size: 22px;
-  padding: 8px;
-}
-
+/* ============ PANGGUNG KENANGAN ============ */
 main {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 100px 20px 35px;
+  position: relative; z-index: 1;
+  height: 100vh; height: 100dvh;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 80px 20px 24px;
   text-align: center;
+  --w: min(72vw, 300px, calc((100dvh - 440px) * .8));
 }
 
-.eyebrow {
-  color: #c5c5d2;
-  font-size: 10px;
-  letter-spacing: 5px;
-  margin-bottom: 22px;
+.eyebrow { color: #c5c5d2; font-size: 10px; letter-spacing: 5px; margin-bottom: 18px; }
+
+.stage {
+  position: relative;
+  width: min(92vw, 380px);
+  height: calc(var(--w) * 1.25 + 108px);
+}
+
+.slide {
+  position: absolute; top: 0; left: 50%;
+  width: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  transform: translateX(-50%);
+  opacity: 0; visibility: hidden;
+}
+
+.slide.first-entry { visibility: visible; z-index: 2; animation: firstEntry 3s cubic-bezier(.2,.8,.2,1) forwards; }
+.slide.track-in    { visibility: visible; z-index: 3; animation: trackIn 1.5s cubic-bezier(.6,-.05,.3,1) forwards; }
+.slide.track-out   { visibility: visible; z-index: 2; animation: trackOut 1.5s cubic-bezier(.6,-.05,.3,1) forwards; }
+
+@keyframes firstEntry {
+  from { opacity: 0; transform: translateX(-50%) translateY(40px) scale(.7); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+@keyframes trackIn {
+  from { opacity: 0; transform: translate(calc(-50% - 120vw), -120vh) scale(.8) rotate(-15deg); }
+  to   { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
+}
+@keyframes trackOut {
+  from { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
+  to   { opacity: 0; transform: translate(calc(-50% + 60vw), 100vh) scale(.8) rotate(15deg); }
 }
 
 .photo-frame {
-  width: min(78vw, 330px);
+  position: relative;
+  width: var(--w);
   aspect-ratio: 4 / 5;
   padding: 7px;
   border: 1px solid #ffffff50;
   border-radius: 5px;
   background: #ffffff10;
-  box-shadow: 0 15px 60px #0008;
+  box-shadow: 0 15px 60px #000a;
   overflow: hidden;
 }
 
-#memoryPhoto {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: opacity .5s ease;
+.puzzle { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+.puzzle-piece {
+  position: absolute;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: scale(.1) translate(100px, -100px) rotate(45deg);
+  animation: assemble 1.5s cubic-bezier(.175,.885,.32,1.275) forwards;
+}
+@keyframes assemble { to { opacity: 1; transform: none; } }
+
+.shimmer-frame {
+  position: absolute; top: 0; left: -150%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,.2), transparent);
+  transform: skewX(-25deg);
+  animation: sweepShine 5s infinite;
+  pointer-events: none;
 }
 
-#memoryText {
-  margin-top: 27px;
-  max-width: 340px;
-  min-height: 58px;
-  font-size: clamp(17px, 5vw, 23px);
-  line-height: 1.6;
-  font-weight: 300;
-  letter-spacing: .5px;
-  text-shadow: 0 2px 12px #000;
+.memory-text {
+  margin-top: 20px;
+  font-family: 'Satisfy', cursive;
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.35;
+  padding: 0 10px;
+  min-height: 40px;
+  animation: lyricGlow 2.5s infinite alternate;
+}
+@keyframes lyricGlow {
+  from { text-shadow: 0 0 5px rgba(255,255,255,.4); }
+  to   { text-shadow: 0 0 15px rgba(255,255,255,1), 0 0 25px rgba(255,255,255,.7); }
 }
 
-#memorySub {
-  color: #c2c1ce;
-  font-size: 11px;
-  letter-spacing: 3px;
-  margin-top: 12px;
+.memory-sub { color: #c2c1ce; font-size: 11px; letter-spacing: 3px; margin-top: 8px; }
+
+svg { width: 1em; height: 1em; fill: currentColor; display: block; }
+
+.progress-area { width: min(86vw, 340px); margin-top: 14px; }
+
+#seek {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; margin: 0; display: block;
+  border-radius: 4px; outline: none; cursor: pointer;
+  background: linear-gradient(to right, #fff var(--p, 0%), #ffffff35 var(--p, 0%));
+}
+#seek::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; border-radius: 50%; background: #fff; transition: width .15s, height .15s; }
+#seek:active::-webkit-slider-thumb { width: 13px; height: 13px; }
+#seek::-moz-range-thumb { width: 0; height: 0; border: 0; border-radius: 50%; background: #fff; }
+#seek:active::-moz-range-thumb { width: 13px; height: 13px; }
+
+.time-row { display: flex; justify-content: space-between; color: #c7c7d2; font-size: 11px; margin-top: 8px; font-variant-numeric: tabular-nums; }
+
+.controls { display: flex; align-items: center; justify-content: space-between; width: min(86vw, 340px); margin-top: 8px; }
+.ctl { background: none; font-size: 26px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #fff; opacity: .85; transition: transform .12s, color .2s; }
+.ctl.on { color: #ff8fb1; opacity: 1; }
+#likeBtn svg path { fill: none; stroke: currentColor; stroke-width: 2; }
+#likeBtn.on svg path { fill: currentColor; }
+.big { width: 64px; height: 64px; border-radius: 50%; background: #fff; color: #101116; font-size: 32px; display: grid; place-items: center; transition: transform .12s; box-shadow: 0 0 25px #ffffff25; }
+.ctl:active, .big:active, #playMain:active, #miniPlay:active { transform: scale(.9); }
+
+footer { color: #aaaab8; font-size: 10px; letter-spacing: 3px; margin-top: 16px; }
+
+/* ============ HATI MELAYANG ============ */
+#hearts { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
+.heart {
+  position: absolute; bottom: -40px;
+  color: #ffd1dc;
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(255,255,255,.7));
+  animation: floatUp 7s ease-in-out forwards;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(0) rotate(var(--rot)) scale(.8); opacity: 0; }
+  15%  { opacity: .9; }
+  85%  { opacity: .9; }
+  100% { transform: translateY(-105vh) translateX(var(--drift)) rotate(var(--rot)) scale(1.1); opacity: 0; }
 }
 
-.progress-area {
-  width: min(80vw, 320px);
-  margin-top: 25px;
-}
-
-.progress-track {
-  height: 3px;
-  border-radius: 5px;
-  background: #ffffff35;
-  overflow: hidden;
-}
-
-#progress {
-  height: 100%;
-  width: 0%;
-  background: white;
-}
-
-.time-row {
-  display: flex;
-  justify-content: space-between;
-  color: #c7c7d2;
-  font-size: 10px;
-  margin-top: 7px;
-}
-
-footer {
-  color: #aaaab8;
-  font-size: 10px;
-  letter-spacing: 3px;
-  margin-top: 35px;
-}
-
-@media (max-width: 380px) {
-  .cover-card { width: min(100%, 310px); }
-  .cover-info h1 { font-size: 23px; }
-  main { padding-top: 95px; }
+@media (prefers-reduced-motion: reduce) {
+  .film-container, #film-bg, .shimmer, .shimmer-frame, .memory-text, .heart { animation: none; }
 }
 </style>
 </head>
 
 <body>
 
-<div id="background">
-  <div class="bg-column" id="bg1"></div>
-  <div class="bg-column" id="bg2"></div>
-  <div class="bg-column" id="bg3"></div>
-</div>
+<div class="film-container"><div id="film-bg"></div></div>
 <div class="shade"></div>
+<div id="hearts"></div>
 
 <!-- HALAMAN PEMBUKA -->
 <section id="intro">
   <div class="cover-card">
-    <img
-      class="cover"
-      src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg"
-      alt="Cover About You"
-    >
+    <div class="cover-wrap">
+      <img class="cover" src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg" alt="Cover About You">
+      <div class="shimmer"></div>
+    </div>
 
     <div class="cover-info">
       <h1>About You</h1>
@@ -320,15 +307,12 @@ footer {
       <button id="playMain" aria-label="Play music">▶</button>
     </div>
   </div>
+  <div class="credit"><span id="creditText"></span><span class="cursor">|</span></div>
 </section>
 
 <!-- PEMUTAR MUSIK KECIL -->
 <div id="miniPlayer">
-  <img
-    id="miniCover"
-    src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg"
-    alt="Cover"
-  >
+  <img id="miniCover" src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg" alt="Cover">
   <div class="track-info">
     <strong>About You</strong>
     <small>The 1975 · Our memories</small>
@@ -344,32 +328,40 @@ footer {
 <main>
   <div class="eyebrow">A LITTLE PIECE OF US</div>
 
-  <div class="photo-frame">
-    <img id="memoryPhoto"
-      src="IMG-20261001-WA0014.jpg"
-      alt="Foto kenangan">
+  <div class="stage">
+    <div class="slide" id="slide0">
+      <div class="photo-frame"><div class="puzzle" id="puzzle0"></div><div class="shimmer-frame"></div></div>
+      <div class="memory-text" id="text0"></div>
+      <div class="memory-sub" id="sub0"></div>
+    </div>
+    <div class="slide" id="slide1">
+      <div class="photo-frame"><div class="puzzle" id="puzzle1"></div><div class="shimmer-frame"></div></div>
+      <div class="memory-text" id="text1"></div>
+      <div class="memory-sub" id="sub1"></div>
+    </div>
   </div>
 
-  <div id="memoryText">I</div>
-  <div id="memorySub">SOMEWHERE IN MY HEART ♡</div>
-
   <div class="progress-area">
-    <div class="progress-track">
-      <div id="progress"></div>
-    </div>
+    <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Posisi lagu">
     <div class="time-row">
       <span id="currentTime">0:00</span>
       <span id="totalTime">0:00</span>
     </div>
   </div>
 
-  <footer>MADE WITH LOVE ♡</footer>
+  <div class="controls">
+    <button class="ctl" id="likeBtn" aria-label="Suka"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 5 6.3 5c2 0 3.5 1.1 4.3 2.4h2.8C14.2 6.1 15.7 5 17.7 5 21 5 23.1 8.3 21.6 11.7 19.5 16.4 12 21 12 21z"/></svg></button>
+    <button class="ctl" id="prevBtn" aria-label="Sebelumnya"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
+    <button class="big" id="playBtn" aria-label="Putar"></button>
+    <button class="ctl" id="nextBtn" aria-label="Berikutnya"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+    <button class="ctl" id="repeatBtn" aria-label="Ulangi"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
+  </div>
+
+  <footer>MEMORIES OF MOUNT SLAMET</footer>
 </main>
 
 <script>
-const coverFile =
-  "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg";
-
+/* ============ DATA ============ */
 const photos = [
   "IMG-20261001-WA0014.jpg",
   "IMG_20261015_175351.jpg",
@@ -382,141 +374,174 @@ const photos = [
   "lv_0_20261002210535.jpg"
 ];
 
-const music = document.getElementById("music");
-const intro = document.getElementById("intro");
-const miniPlayer = document.getElementById("miniPlayer");
-const playMain = document.getElementById("playMain");
-const miniPlay = document.getElementById("miniPlay");
-const memoryPhoto = document.getElementById("memoryPhoto");
-const memoryText = document.getElementById("memoryText");
-const memorySub = document.getElementById("memorySub");
-const progress = document.getElementById("progress");
-const currentTime = document.getElementById("currentTime");
-const totalTime = document.getElementById("totalTime");
-
-let started = false;
-let currentMoment = -1;
-
-/* Latar belakang bergerak */
-["bg1", "bg2", "bg3"].forEach((id, columnIndex) => {
-  const column = document.getElementById(id);
-  const list = [...photos, ...photos];
-
-  list.forEach((file, index) => {
-    const img = document.createElement("img");
-    img.src = file;
-    img.alt = "";
-    img.loading = "lazy";
-    column.appendChild(img);
-  });
-});
+const creditString = "Memories of Mount Slamet";
 
 /*
-  Waktu menggunakan detik dari awal lagu.
-  Foto berganti sesuai daftar momen.
+  time  = detik dari awal lagu
+  photo = nomor foto di daftar atas (mulai dari 0)
+  text  = tulisan besar di bawah foto (silakan isi kata-katamu sendiri)
+  sub   = tulisan kecil di bawahnya
 */
 const moments = [
-  {
-    time: 0,
-    photo: 0,
-    text: "I",
-    sub: "SOMEWHERE IN MY HEART ♡"
-  },
-  {
-    time: 2,
-    photo: 1,
-    text: "know a place",
-    sub: "A PLACE I REMEMBER"
-  },
-  {
-    time: 11,
-    photo: 2,
-    text: "It's somewhere I go when I need to remember your face",
-    sub: "EVERY LITTLE MEMORY ♡"
-  },
-  {
-    time: 17,
-    photo: 3,
-    text: "We get married in our heads",
-    sub: "SOMEWHERE IN OUR DREAMS"
-  },
-  {
-    time: 30,
-    photo: 4,
-    text: "Something to do while we try to recall how we met",
-    sub: "BACK TO WHERE IT BEGAN"
-  },
-  {
-    time: 40,
-    photo: 5,
-    text: "Do you think I have forgotten?",
-    sub: "I STILL REMEMBER ♡"
-  },
-  {
-    time: 44,
-    photo: 6,
-    text: "Do you think I have forgotten?",
-    sub: "NOT A SINGLE MEMORY"
-  },
-  {
-    time: 50,
-    photo: 7,
-    text: "Do you think I have forgotten about you?",
-    sub: "ABOUT YOU ♡"
-  },
-  {
-    time: 60,
-    photo: 8,
-    text: "Some memories never really leave.",
-    sub: "YOU WILL ALWAYS BE A PART OF MY STORY"
-  }
+  { time: 0,  photo: 0, text: "Somewhere in my heart ♡",        sub: "A LITTLE PIECE OF US" },
+  { time: 2,  photo: 1, text: "A place I remember",             sub: "A PLACE I REMEMBER" },
+  { time: 11, photo: 2, text: "Every little memory ♡",          sub: "EVERY LITTLE MEMORY" },
+  { time: 17, photo: 3, text: "Somewhere in our dreams",        sub: "SOMEWHERE IN OUR DREAMS" },
+  { time: 30, photo: 4, text: "Back to where it began",         sub: "BACK TO WHERE IT BEGAN" },
+  { time: 40, photo: 5, text: "I still remember ♡",             sub: "I STILL REMEMBER" },
+  { time: 44, photo: 6, text: "Not a single memory",            sub: "NOT A SINGLE MEMORY" },
+  { time: 50, photo: 7, text: "About you ♡",                    sub: "ABOUT YOU" },
+  { time: 60, photo: 8, text: "Some memories never really leave.", sub: "YOU WILL ALWAYS BE A PART OF MY STORY" }
 ];
 
-function formatTime(seconds) {
-  if (!Number.isFinite(seconds)) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return mins + ":" + String(secs).padStart(2, "0");
+/* ============ ELEMEN ============ */
+const $ = id => document.getElementById(id);
+const music = $("music"), intro = $("intro"), miniPlayer = $("miniPlayer");
+const playMain = $("playMain"), miniPlay = $("miniPlay");
+const seek = $("seek"), currentTime = $("currentTime"), totalTime = $("totalTime");
+const playBtn = $("playBtn"), prevBtn = $("prevBtn"), nextBtn = $("nextBtn"), likeBtn = $("likeBtn"), repeatBtn = $("repeatBtn");
+let dragging = false;
+const filmBg = $("film-bg"), hearts = $("hearts");
+const slides = [
+  { el: $("slide0"), puzzle: $("puzzle0"), text: $("text0"), sub: $("sub0") },
+  { el: $("slide1"), puzzle: $("puzzle1"), text: $("text1"), sub: $("sub1") }
+];
+
+let active = 0, currentMoment = -1, firstDone = false, heartTimer = null, busy = 0;
+
+/* ============ LATAR FILM ============ */
+(function buildFilm() {
+  let html = "";
+  for (let r = 0; r < 4; r++) {
+    photos.forEach(f => { html += `<img src="${f}" data-img="${f}" class="bg-roll-img" alt="">`; });
+  }
+  filmBg.innerHTML = html;
+})();
+
+/* ============ TEKS KREDIT DIKETIK ============ */
+(function typeCredit() {
+  let i = 0;
+  const el = $("creditText");
+  function step() {
+    if (i < creditString.length) { el.textContent += creditString.charAt(i++); setTimeout(step, 120); }
+  }
+  setTimeout(step, 500);
+})();
+
+/* ============ PUZZLE (foto dipotong agar tidak gepeng) ============ */
+const cropCache = {};
+function cropPhoto(src) {
+  if (cropCache[src]) return cropCache[src];
+  cropCache[src] = new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const W = 480, H = 600, c = document.createElement("canvas");
+        c.width = W; c.height = H;
+        const s = Math.max(W / img.width, H / img.height);
+        const w = img.width * s, h = img.height * s;
+        c.getContext("2d").drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+        resolve(c.toDataURL("image/jpeg", .85));
+      } catch (e) { resolve(src); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+  return cropCache[src];
 }
 
-function showMoment(index) {
+function buildPuzzle(container, url) {
+  container.innerHTML = "";
+  if (!url) return;
+  const cols = 4, rows = 5;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const p = document.createElement("div");
+      p.className = "puzzle-piece";
+      p.style.backgroundImage = `url('${url}')`;
+      p.style.width = (100 / cols) + "%";
+      p.style.height = (100 / rows) + "%";
+      p.style.left = (c * 100 / cols) + "%";
+      p.style.top = (r * 100 / rows) + "%";
+      p.style.backgroundSize = (cols * 100) + "% " + (rows * 100) + "%";
+      p.style.backgroundPosition = (c * 100 / (cols - 1)) + "% " + (r * 100 / (rows - 1)) + "%";
+      p.style.animationDelay = (Math.random() * .8) + "s";
+      container.appendChild(p);
+    }
+  }
+}
+
+function markFilm(file) {
+  document.querySelectorAll(".bg-roll-img").forEach(img => {
+    img.classList.toggle("missing-from-roll", img.dataset.img === file);
+  });
+}
+
+/* ============ GANTI MOMEN ============ */
+async function showMoment(index) {
   if (index < 0 || index === currentMoment) return;
-
   currentMoment = index;
-  const moment = moments[index];
+  const token = ++busy;
+  const m = moments[index], file = photos[m.photo];
+  markFilm(file);
+  const url = await cropPhoto(file);
+  if (token !== busy) return;
 
-  memoryPhoto.style.opacity = "0";
-  memoryText.style.opacity = "0";
+  if (!firstDone) {
+    const s = slides[0];
+    buildPuzzle(s.puzzle, url);
+    s.text.textContent = m.text; s.sub.textContent = m.sub;
+    s.el.className = "slide";
+    void s.el.offsetWidth;
+    s.el.className = "slide first-entry";
+    firstDone = true; active = 0;
+    return;
+  }
 
-  setTimeout(() => {
-    memoryPhoto.src = photos[moment.photo];
-    memoryText.textContent = moment.text;
-    memorySub.textContent = moment.sub;
-
-    memoryPhoto.style.opacity = "1";
-    memoryText.style.opacity = "1";
-  }, 250);
+  const inS = slides[1 - active], outS = slides[active];
+  buildPuzzle(inS.puzzle, url);
+  inS.text.textContent = m.text; inS.sub.textContent = m.sub;
+  inS.el.className = "slide"; outS.el.className = "slide";
+  void inS.el.offsetWidth;
+  inS.el.className = "slide track-in";
+  outS.el.className = "slide track-out";
+  active = 1 - active;
 }
 
 function updateMoment() {
-  const time = music.currentTime;
-  let index = 0;
+  const t = music.currentTime;
+  let idx = 0;
+  for (let i = 0; i < moments.length; i++) if (t >= moments[i].time) idx = i;
+  showMoment(idx);
+}
 
-  for (let i = 0; i < moments.length; i++) {
-    if (time >= moments[i].time) index = i;
-  }
+/* ============ HATI MELAYANG ============ */
+function spawnHeart() {
+  if (music.paused) return;
+  const h = document.createElement("span");
+  h.className = "heart";
+  h.textContent = Math.random() > .5 ? "♡" : "♥";
+  h.style.left = (Math.random() * 90 + 5) + "vw";
+  h.style.fontSize = (14 + Math.random() * 22) + "px";
+  h.style.setProperty("--rot", ((Math.random() - .5) * 40) + "deg");
+  h.style.setProperty("--drift", ((Math.random() - .5) * 80) + "px");
+  hearts.appendChild(h);
+  setTimeout(() => h.remove(), 7000);
+}
 
-  showMoment(index);
+/* ============ PEMUTAR ============ */
+function formatTime(s) {
+  if (!Number.isFinite(s)) return "0:00";
+  return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
 }
 
 async function startMusic() {
   try {
     await music.play();
-    started = true;
     intro.classList.add("hide");
     miniPlayer.classList.add("show");
-    miniPlay.textContent = "Ⅱ";
-  } catch (error) {
+    updateMoment();
+  } catch (e) {
     alert("Musik belum bisa diputar. Cek apakah file MP3 sudah di-upload dengan nama yang benar.");
   }
 }
@@ -524,49 +549,21 @@ async function startMusic() {
 playMain.addEventListener("click", startMusic);
 
 miniPlay.addEventListener("click", async () => {
-  if (music.paused) {
-    try {
-      await music.play();
-    } catch (error) {
-      alert("Musik belum bisa diputar.");
-    }
-  } else {
-    music.pause();
-  }
+  if (music.paused) { try { await music.play(); } catch (e) { alert("Musik belum bisa diputar."); } }
+  else music.pause();
 });
 
 music.addEventListener("play", () => {
-  miniPlay.textContent = "Ⅱ";
+  setIcons(true);
+  clearInterval(heartTimer);
+  heartTimer = setInterval(spawnHeart, 1400);
 });
-
-music.addEventListener("pause", () => {
-  miniPlay.textContent = "▶";
-});
+music.addEventListener("pause", () => { setIcons(false); clearInterval(heartTimer); });
+music.addEventListener("ended", () => { setIcons(false); clearInterval(heartTimer); });
 
 music.addEventListener("timeupdate", () => {
   updateMoment();
-
   if (music.duration && Number.isFinite(music.duration)) {
-    progress.style.width =
-      (music.currentTime / music.duration * 100) + "%";
-
-    currentTime.textContent = formatTime(music.currentTime);
-    totalTime.textContent = formatTime(music.duration);
-  }
-});
-
-music.addEventListener("loadedmetadata", () => {
-  totalTime.textContent = formatTime(music.duration);
-});
-
-music.addEventListener("ended", () => {
-  miniPlay.textContent = "▶";
-});
-
-music.addEventListener("error", () => {
-  console.log("Periksa nama dan lokasi file MP3 di repositori.");
-});
-</script>
-
-</body>
-    </html>
+    if (!dragging) {
+      seek.value = music.currentTime / music.duration * 1000;
+      seek.style.setProperty("--p", (music.currentTime / m
