@@ -566,4 +566,83 @@ music.addEventListener("timeupdate", () => {
   if (music.duration && Number.isFinite(music.duration)) {
     if (!dragging) {
       seek.value = music.currentTime / music.duration * 1000;
-      seek.style.setProperty("--p", (music.currentTime / m
+      seek.style.setProperty("--p", (music.currentTime / music.duration * 100) + "%");
+    }
+    currentTime.textContent = formatTime(music.currentTime);
+    totalTime.textContent = formatTime(music.duration);
+  }
+});
+music.addEventListener("loadedmetadata", () => { totalTime.textContent = formatTime(music.duration); });
+
+/* ============ BAR & TOMBOL ALA SPOTIFY ============ */
+seek.addEventListener("input", () => {
+  dragging = true;
+  seek.style.setProperty("--p", (seek.value / 10) + "%");
+  if (music.duration) currentTime.textContent = formatTime(seek.value / 1000 * music.duration);
+});
+seek.addEventListener("change", () => {
+  if (music.duration) music.currentTime = seek.value / 1000 * music.duration;
+  dragging = false;
+});
+
+const PLAY_ICON = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+const PAUSE_ICON = '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
+
+function setIcons(playing) {
+  const icon = playing ? PAUSE_ICON : PLAY_ICON;
+  const label = playing ? "Jeda" : "Putar";
+  [playMain, miniPlay, playBtn].forEach(b => { b.innerHTML = icon; b.setAttribute("aria-label", label); });
+}
+setIcons(false);
+
+async function togglePlay() {
+  if (music.paused) {
+    if (!intro.classList.contains("hide")) { startMusic(); return; }
+    try { await music.play(); } catch (e) { alert("Musik belum bisa diputar."); }
+  } else music.pause();
+}
+playBtn.addEventListener("click", togglePlay);
+
+function momentIndex() {
+  let idx = 0;
+  for (let i = 0; i < moments.length; i++) if (music.currentTime >= moments[i].time) idx = i;
+  return idx;
+}
+function goPrev() {
+  const i = momentIndex();
+  const target = music.currentTime - moments[i].time > 3 ? moments[i].time : (moments[i - 1] ? moments[i - 1].time : 0);
+  music.currentTime = target;
+}
+function goNext() {
+  const i = momentIndex();
+  music.currentTime = moments[i + 1] ? moments[i + 1].time : 0;
+}
+prevBtn.addEventListener("click", goPrev);
+nextBtn.addEventListener("click", goNext);
+likeBtn.addEventListener("click", () => likeBtn.classList.toggle("on"));
+repeatBtn.addEventListener("click", () => {
+  music.loop = !music.loop;
+  repeatBtn.classList.toggle("on", music.loop);
+});
+
+/* Kontrol di layar kunci / pusat kontrol iPhone */
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: "About You",
+    artist: "The 1975",
+    album: "Memories of Mount Slamet",
+    artwork: [{ src: "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg", sizes: "512x512", type: "image/jpeg" }]
+  });
+  const ms = navigator.mediaSession;
+  ms.setActionHandler("play", () => music.play());
+  ms.setActionHandler("pause", () => music.pause());
+  ms.setActionHandler("previoustrack", goPrev);
+  ms.setActionHandler("nexttrack", goNext);
+  try { ms.setActionHandler("seekto", d => { if (d.seekTime != null) music.currentTime = d.seekTime; }); } catch (e) {}
+}
+
+music.addEventListener("error", () => console.log("Periksa nama dan lokasi file MP3 di repositori."));
+</script>
+
+</body>
+</html>
