@@ -1,648 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>About You ♡</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap">
-
 <style>
-* { box-sizing: border-box; }
+:root{--bg:#121212;--panel:#1c1c1e;--teks:#fff;--redup:#a7a7ab;--aksen:#ff6f91}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--teks);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center;overflow:hidden}
+.app{width:100%;max-width:420px;height:100dvh;padding:max(16px,env(safe-area-inset-top)) 20px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
 
-html, body { height: 100%; }
+/* Panggung foto */
+.stage{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;background:var(--panel)}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.stage img.aktif{opacity:1;animation:masuk 1.2s ease both,zoom 14s linear both}
+@keyframes masuk{from{opacity:0}to{opacity:1}}
+@keyframes zoom{from{transform:scale(1)}to{transform:scale(1.08)}}
+.cap{position:absolute;left:0;right:0;bottom:0;z-index:999;padding:36px 16px 14px;font-size:17px;line-height:1.35;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.cap:empty{display:none}
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: white;
-  background: #050508;
-  overflow: hidden;
-}
+/* Saat dijeda, semua animasi ikut berhenti */
+.app.paused *{animation-play-state:paused!important}
 
-button { cursor: pointer; color: white; border: none; }
+/* Info lagu */
+.info{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.info h1{font-size:22px;font-weight:700}
+.info p{color:var(--redup);font-size:15px;margin-top:2px}
+.love{background:none;border:0;color:var(--redup);padding:6px;cursor:pointer}
+.love.on{color:var(--aksen)}
+.love.on path{fill:currentColor}
 
-/* ============ LATAR FILM MIRING ============ */
-.film-container {
-  position: fixed;
-  top: 50%; left: 50%;
-  width: 250%; height: 250%;
-  transform: translate(-50%, -50%) rotate(-12deg);
-  z-index: -3;
-  pointer-events: none;
-  animation: throbBlur 5s ease-in-out infinite alternate;
-}
+/* Progres */
+.bar{width:100%;height:4px;accent-color:#fff;touch-action:none}
+.waktu{display:flex;justify-content:space-between;color:var(--redup);font-size:12px;margin-top:-6px}
 
-@keyframes throbBlur {
-  0%   { filter: blur(.5px) brightness(.5);  transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
-  100% { filter: blur(2px)  brightness(.8);  transform: translate(-50%, -50%) rotate(-12deg) scale(1.02); }
-}
+/* Tombol */
+.ctrl{display:flex;align-items:center;justify-content:center;gap:34px}
+.ctrl button{background:none;border:0;color:var(--teks);cursor:pointer;display:grid;place-items:center}
+.ctrl svg{width:30px;height:30px;fill:currentColor}
+.ctrl .main{width:64px;height:64px;border-radius:50%;background:#fff;color:#000}
+.ctrl .main svg{width:32px;height:32px}
+.foot{text-align:center;color:var(--redup);font-size:11px;letter-spacing:.12em}
 
-#film-bg {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  gap: 14px;
-  width: 100%; height: 100%;
-  animation: scrollFilm 60s linear infinite;
-}
-
-.bg-roll-img {
-  width: 150px; height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  transition: opacity .8s ease, transform .8s ease;
-}
-
-.bg-roll-img.missing-from-roll { opacity: 0; transform: scale(.5); }
-
-@keyframes scrollFilm {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-20%); }
-}
-
-.shade {
-  position: fixed; inset: 0; z-index: -2;
-  background: radial-gradient(circle, rgba(15,15,20,.25) 0%, rgba(5,5,8,.95) 100%);
-}
-
-/* ============ HALAMAN PEMBUKA ============ */
-#intro {
-  position: fixed; inset: 0; z-index: 20;
-  display: flex; justify-content: center; align-items: center;
-  padding: 24px;
-  background: #090a10;
-  transition: opacity .8s ease, visibility .8s ease;
-}
-#intro.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-
-.cover-card { width: min(100%, 360px); text-align: left; }
-
-.cover-wrap { position: relative; overflow: hidden; box-shadow: 0 12px 50px #000; }
-.cover { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
-
-.shimmer {
-  position: absolute; top: 0; left: -150%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,.4), transparent);
-  transform: skewX(-25deg);
-  animation: sweepShine 3.5s infinite;
-  pointer-events: none;
-}
-
-@keyframes sweepShine {
-  0% { left: -150%; }
-  50%, 100% { left: 200%; }
-}
-
-.cover-info { margin-top: 22px; }
-.cover-info h1 { margin: 0 0 8px; font-size: 27px; letter-spacing: 1px; }
-.cover-info p { color: #b9bac6; margin: 0; }
-
-.cover-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
-
-#playMain {
-  width: 62px; height: 62px; border-radius: 50%;
-  background: white; color: #101116; font-size: 30px;
-  display: grid; place-items: center;
-  box-shadow: 0 0 25px #ffffff25;
-}
-
-.hint { color: #aaaab8; font-size: 12px; letter-spacing: 1px; }
-
-.credit {
-  position: absolute; left: 0; right: 0; bottom: 8%;
-  text-align: center;
-  font-family: 'Satisfy', cursive;
-  font-size: 24px;
-  color: rgba(255,255,255,.9);
-  text-shadow: 0 0 12px rgba(255,255,255,.6);
-}
-.cursor { animation: blink 1s infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-/* ============ PEMUTAR KECIL ============ */
-#miniPlayer {
-  position: fixed; z-index: 10;
-  top: 12px; left: 12px; right: 12px;
-  display: none; align-items: center; gap: 10px;
-  padding: 9px 12px;
-  border: 1px solid #ffffff20; border-radius: 14px;
-  background: #11121bd9;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 5px 25px #0005;
-}
-#miniPlayer.show { display: flex; animation: dropIn .8s cubic-bezier(.25,1,.3,1); }
-@keyframes dropIn { from { opacity: 0; transform: translateY(-30px) scale(.9); } to { opacity: 1; transform: none; } }
-
-#miniCover { width: 43px; height: 43px; object-fit: cover; border-radius: 5px; }
-.track-info { flex: 1; min-width: 0; }
-.track-info strong { display: block; font-size: 13px; }
-.track-info small { color: #b8b8c5; font-size: 11px; }
-#miniPlay { background: transparent; font-size: 22px; padding: 8px; }
-
-/* ============ PANGGUNG KENANGAN ============ */
-main {
-  position: relative; z-index: 1;
-  height: 100vh; height: 100dvh;
-  overflow: hidden;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  padding: 80px 20px 24px;
-  text-align: center;
-  --w: min(72vw, 300px, calc((100dvh - 440px) * .8));
-}
-
-.eyebrow { color: #c5c5d2; font-size: 10px; letter-spacing: 5px; margin-bottom: 18px; }
-
-.stage {
-  position: relative;
-  width: min(92vw, 380px);
-  height: calc(var(--w) * 1.25 + 108px);
-}
-
-.slide {
-  position: absolute; top: 0; left: 50%;
-  width: 100%;
-  display: flex; flex-direction: column; align-items: center;
-  transform: translateX(-50%);
-  opacity: 0; visibility: hidden;
-}
-
-.slide.first-entry { visibility: visible; z-index: 2; animation: firstEntry 3s cubic-bezier(.2,.8,.2,1) forwards; }
-.slide.track-in    { visibility: visible; z-index: 3; animation: trackIn 1.5s cubic-bezier(.6,-.05,.3,1) forwards; }
-.slide.track-out   { visibility: visible; z-index: 2; animation: trackOut 1.5s cubic-bezier(.6,-.05,.3,1) forwards; }
-
-@keyframes firstEntry {
-  from { opacity: 0; transform: translateX(-50%) translateY(40px) scale(.7); }
-  to   { opacity: 1; transform: translateX(-50%) scale(1); }
-}
-@keyframes trackIn {
-  from { opacity: 0; transform: translate(calc(-50% - 120vw), -120vh) scale(.8) rotate(-15deg); }
-  to   { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
-}
-@keyframes trackOut {
-  from { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
-  to   { opacity: 0; transform: translate(calc(-50% + 60vw), 100vh) scale(.8) rotate(15deg); }
-}
-
-.photo-frame {
-  position: relative;
-  width: var(--w);
-  aspect-ratio: 4 / 5;
-  padding: 7px;
-  border: 1px solid #ffffff50;
-  border-radius: 5px;
-  background: #ffffff10;
-  box-shadow: 0 15px 60px #000a;
-  overflow: hidden;
-}
-
-.puzzle { position: relative; width: 100%; height: 100%; overflow: hidden; }
-
-.puzzle-piece {
-  position: absolute;
-  background-repeat: no-repeat;
-  opacity: 0;
-  transform: scale(.1) translate(100px, -100px) rotate(45deg);
-  animation: assemble 1.5s cubic-bezier(.175,.885,.32,1.275) forwards;
-}
-@keyframes assemble { to { opacity: 1; transform: none; } }
-
-.shimmer-frame {
-  position: absolute; top: 0; left: -150%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,.2), transparent);
-  transform: skewX(-25deg);
-  animation: sweepShine 5s infinite;
-  pointer-events: none;
-}
-
-.memory-text {
-  margin-top: 20px;
-  font-family: 'Satisfy', cursive;
-  font-size: clamp(22px, 6vw, 28px);
-  line-height: 1.35;
-  padding: 0 10px;
-  min-height: 40px;
-  animation: lyricGlow 2.5s infinite alternate;
-}
-@keyframes lyricGlow {
-  from { text-shadow: 0 0 5px rgba(255,255,255,.4); }
-  to   { text-shadow: 0 0 15px rgba(255,255,255,1), 0 0 25px rgba(255,255,255,.7); }
-}
-
-.memory-sub { color: #c2c1ce; font-size: 11px; letter-spacing: 3px; margin-top: 8px; }
-
-svg { width: 1em; height: 1em; fill: currentColor; display: block; }
-
-.progress-area { width: min(86vw, 340px); margin-top: 14px; }
-
-#seek {
-  -webkit-appearance: none; appearance: none;
-  width: 100%; height: 4px; margin: 0; display: block;
-  border-radius: 4px; outline: none; cursor: pointer;
-  background: linear-gradient(to right, #fff var(--p, 0%), #ffffff35 var(--p, 0%));
-}
-#seek::-webkit-slider-thumb { -webkit-appearance: none; width: 0; height: 0; border-radius: 50%; background: #fff; transition: width .15s, height .15s; }
-#seek:active::-webkit-slider-thumb { width: 13px; height: 13px; }
-#seek::-moz-range-thumb { width: 0; height: 0; border: 0; border-radius: 50%; background: #fff; }
-#seek:active::-moz-range-thumb { width: 13px; height: 13px; }
-
-.time-row { display: flex; justify-content: space-between; color: #c7c7d2; font-size: 11px; margin-top: 8px; font-variant-numeric: tabular-nums; }
-
-.controls { display: flex; align-items: center; justify-content: space-between; width: min(86vw, 340px); margin-top: 8px; }
-.ctl { background: none; font-size: 26px; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; color: #fff; opacity: .85; transition: transform .12s, color .2s; }
-.ctl.on { color: #ff8fb1; opacity: 1; }
-#likeBtn svg path { fill: none; stroke: currentColor; stroke-width: 2; }
-#likeBtn.on svg path { fill: currentColor; }
-.big { width: 64px; height: 64px; border-radius: 50%; background: #fff; color: #101116; font-size: 32px; display: grid; place-items: center; transition: transform .12s; box-shadow: 0 0 25px #ffffff25; }
-.ctl:active, .big:active, #playMain:active, #miniPlay:active { transform: scale(.9); }
-
-footer { color: #aaaab8; font-size: 10px; letter-spacing: 3px; margin-top: 16px; }
-
-/* ============ HATI MELAYANG ============ */
-#hearts { position: fixed; inset: 0; z-index: 5; pointer-events: none; overflow: hidden; }
-.heart {
-  position: absolute; bottom: -40px;
-  color: #ffd1dc;
-  opacity: 0;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,.7));
-  animation: floatUp 7s ease-in-out forwards;
-}
-@keyframes floatUp {
-  0%   { transform: translateY(0) rotate(var(--rot)) scale(.8); opacity: 0; }
-  15%  { opacity: .9; }
-  85%  { opacity: .9; }
-  100% { transform: translateY(-105vh) translateX(var(--drift)) rotate(var(--rot)) scale(1.1); opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .film-container, #film-bg, .shimmer, .shimmer-frame, .memory-text, .heart { animation: none; }
-}
+/* Layar pembuka */
+.intro{position:fixed;inset:0;z-index:9999;background:#000;display:grid;place-content:center;text-align:center;gap:14px;cursor:pointer;transition:opacity .6s}
+.intro.hilang{opacity:0;pointer-events:none}
+.intro h2{font-size:24px;font-weight:600;min-height:32px}
+.intro h2::after{content:"";display:inline-block;width:2px;height:1em;background:#fff;margin-left:3px;vertical-align:-.12em;animation:kedip 1s steps(1) infinite}
+.intro p{color:var(--redup);font-size:14px;opacity:0;transition:opacity .6s}
+.intro.siap p{opacity:1}
+@keyframes kedip{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.stage img.aktif{animation:masuk .6s ease both}}
 </style>
 </head>
-
 <body>
 
-<div class="film-container"><div id="film-bg"></div></div>
-<div class="shade"></div>
-<div id="hearts"></div>
-
-<!-- HALAMAN PEMBUKA -->
-<section id="intro">
-  <div class="cover-card">
-    <div class="cover-wrap">
-      <img class="cover" src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg" alt="Cover About You">
-      <div class="shimmer"></div>
-    </div>
-
-    <div class="cover-info">
-      <h1>About You</h1>
-      <p>The 1975 · A song for our memories</p>
-    </div>
-
-    <div class="cover-controls">
-      <div class="hint">PRESS PLAY TO BEGIN ♡</div>
-      <button id="playMain" aria-label="Play music">▶</button>
-    </div>
-  </div>
-  <div class="credit"><span id="creditText"></span><span class="cursor">|</span></div>
-</section>
-
-<!-- PEMUTAR MUSIK KECIL -->
-<div id="miniPlayer">
-  <img id="miniCover" src="IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg" alt="Cover">
-  <div class="track-info">
-    <strong>About You</strong>
-    <small>The 1975 · Our memories</small>
-  </div>
-  <button id="miniPlay" aria-label="Pause or play">Ⅱ</button>
+<div class="intro" id="intro">
+  <h2 id="ketik"></h2>
+  <p>Ketuk untuk memulai</p>
 </div>
 
-<audio id="music" preload="metadata">
-  <source src="ssstik.io_1792058518920.mp3" type="audio/mpeg">
-</audio>
+<main class="app paused" id="app">
+  <div class="stage" id="stage"><div class="cap" id="cap"></div></div>
 
-<!-- HALAMAN KENANGAN -->
-<main>
-  <div class="eyebrow">A LITTLE PIECE OF US</div>
-
-  <div class="stage">
-    <div class="slide" id="slide0">
-      <div class="photo-frame"><div class="puzzle" id="puzzle0"></div><div class="shimmer-frame"></div></div>
-      <div class="memory-text" id="text0"></div>
-      <div class="memory-sub" id="sub0"></div>
-    </div>
-    <div class="slide" id="slide1">
-      <div class="photo-frame"><div class="puzzle" id="puzzle1"></div><div class="shimmer-frame"></div></div>
-      <div class="memory-text" id="text1"></div>
-      <div class="memory-sub" id="sub1"></div>
-    </div>
+  <div class="info">
+    <div><h1>About You</h1><p>The 1975</p></div>
+    <button class="love" id="love" aria-label="Suka"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>
   </div>
 
-  <div class="progress-area">
-    <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Posisi lagu">
-    <div class="time-row">
-      <span id="currentTime">0:00</span>
-      <span id="totalTime">0:00</span>
-    </div>
-  </div>
-
-  <div class="controls">
-    <button class="ctl" id="likeBtn" aria-label="Suka"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 5 6.3 5c2 0 3.5 1.1 4.3 2.4h2.8C14.2 6.1 15.7 5 17.7 5 21 5 23.1 8.3 21.6 11.7 19.5 16.4 12 21 12 21z"/></svg></button>
-    <button class="ctl" id="prevBtn" aria-label="Sebelumnya"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
-    <button class="big" id="playBtn" aria-label="Putar"></button>
-    <button class="ctl" id="nextBtn" aria-label="Berikutnya"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
-    <button class="ctl" id="repeatBtn" aria-label="Ulangi"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg></button>
-  </div>
-
-  <footer>MEMORIES OF MOUNT SLAMET</footer>
-</main>
-
-<script>
-/* ============ DATA ============ */
-const photos = [
-  "IMG-20261001-WA0014.jpg",
-  "IMG_20261015_175351.jpg",
-  "IMG_20261015_175454.jpg",
-  "IMG_20261015_175711.jpg",
-  "IMG_20261015_175557.jpg",
-  "motion_photo_4054923047229003049.jpg",
-  "IMG-20260914-WA0053.jpg",
-  "file_000000000e6882119543a0ec86ebf88b.png",
-  "lv_0_20261002210535.jpg"
-];
-
-const creditString = "Memories of Mount Slamet";
-
-/*
-  time  = detik dari awal lagu
-  photo = nomor foto di daftar atas (mulai dari 0)
-  text  = tulisan besar di bawah foto (silakan isi kata-katamu sendiri)
-  sub   = tulisan kecil di bawahnya
-*/
-const moments = [
-  { time: 0,  photo: 0, text: "Somewhere in my heart ♡",        sub: "A LITTLE PIECE OF US" },
-  { time: 2,  photo: 1, text: "A place I remember",             sub: "A PLACE I REMEMBER" },
-  { time: 11, photo: 2, text: "Every little memory ♡",          sub: "EVERY LITTLE MEMORY" },
-  { time: 17, photo: 3, text: "Somewhere in our dreams",        sub: "SOMEWHERE IN OUR DREAMS" },
-  { time: 30, photo: 4, text: "Back to where it began",         sub: "BACK TO WHERE IT BEGAN" },
-  { time: 40, photo: 5, text: "I still remember ♡",             sub: "I STILL REMEMBER" },
-  { time: 44, photo: 6, text: "Not a single memory",            sub: "NOT A SINGLE MEMORY" },
-  { time: 50, photo: 7, text: "About you ♡",                    sub: "ABOUT YOU" },
-  { time: 60, photo: 8, text: "Some memories never really leave.", sub: "YOU WILL ALWAYS BE A PART OF MY STORY" }
-];
-
-/* ============ ELEMEN ============ */
-const $ = id => document.getElementById(id);
-const music = $("music"), intro = $("intro"), miniPlayer = $("miniPlayer");
-const playMain = $("playMain"), miniPlay = $("miniPlay");
-const seek = $("seek"), currentTime = $("currentTime"), totalTime = $("totalTime");
-const playBtn = $("playBtn"), prevBtn = $("prevBtn"), nextBtn = $("nextBtn"), likeBtn = $("likeBtn"), repeatBtn = $("repeatBtn");
-let dragging = false;
-const filmBg = $("film-bg"), hearts = $("hearts");
-const slides = [
-  { el: $("slide0"), puzzle: $("puzzle0"), text: $("text0"), sub: $("sub0") },
-  { el: $("slide1"), puzzle: $("puzzle1"), text: $("text1"), sub: $("sub1") }
-];
-
-let active = 0, currentMoment = -1, firstDone = false, heartTimer = null, busy = 0;
-
-/* ============ LATAR FILM ============ */
-(function buildFilm() {
-  let html = "";
-  for (let r = 0; r < 4; r++) {
-    photos.forEach(f => { html += `<img src="${f}" data-img="${f}" class="bg-roll-img" alt="">`; });
-  }
-  filmBg.innerHTML = html;
-})();
-
-/* ============ TEKS KREDIT DIKETIK ============ */
-(function typeCredit() {
-  let i = 0;
-  const el = $("creditText");
-  function step() {
-    if (i < creditString.length) { el.textContent += creditString.charAt(i++); setTimeout(step, 120); }
-  }
-  setTimeout(step, 500);
-})();
-
-/* ============ PUZZLE (foto dipotong agar tidak gepeng) ============ */
-const cropCache = {};
-function cropPhoto(src) {
-  if (cropCache[src]) return cropCache[src];
-  cropCache[src] = new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      try {
-        const W = 480, H = 600, c = document.createElement("canvas");
-        c.width = W; c.height = H;
-        const s = Math.max(W / img.width, H / img.height);
-        const w = img.width * s, h = img.height * s;
-        c.getContext("2d").drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
-        resolve(c.toDataURL("image/jpeg", .85));
-      } catch (e) { resolve(src); }
-    };
-    img.onerror = () => resolve(null);
-    img.src = src;
-  });
-  return cropCache[src];
-}
-
-function buildPuzzle(container, url) {
-  container.innerHTML = "";
-  if (!url) return;
-  const cols = 4, rows = 5;
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const p = document.createElement("div");
-      p.className = "puzzle-piece";
-      p.style.backgroundImage = `url('${url}')`;
-      p.style.width = (100 / cols) + "%";
-      p.style.height = (100 / rows) + "%";
-      p.style.left = (c * 100 / cols) + "%";
-      p.style.top = (r * 100 / rows) + "%";
-      p.style.backgroundSize = (cols * 100) + "% " + (rows * 100) + "%";
-      p.style.backgroundPosition = (c * 100 / (cols - 1)) + "% " + (r * 100 / (rows - 1)) + "%";
-      p.style.animationDelay = (Math.random() * .8) + "s";
-      container.appendChild(p);
-    }
-  }
-}
-
-function markFilm(file) {
-  document.querySelectorAll(".bg-roll-img").forEach(img => {
-    img.classList.toggle("missing-from-roll", img.dataset.img === file);
-  });
-}
-
-/* ============ GANTI MOMEN ============ */
-async function showMoment(index) {
-  if (index < 0 || index === currentMoment) return;
-  currentMoment = index;
-  const token = ++busy;
-  const m = moments[index], file = photos[m.photo];
-  markFilm(file);
-  const url = await cropPhoto(file);
-  if (token !== busy) return;
-
-  if (!firstDone) {
-    const s = slides[0];
-    buildPuzzle(s.puzzle, url);
-    s.text.textContent = m.text; s.sub.textContent = m.sub;
-    s.el.className = "slide";
-    void s.el.offsetWidth;
-    s.el.className = "slide first-entry";
-    firstDone = true; active = 0;
-    return;
-  }
-
-  const inS = slides[1 - active], outS = slides[active];
-  buildPuzzle(inS.puzzle, url);
-  inS.text.textContent = m.text; inS.sub.textContent = m.sub;
-  inS.el.className = "slide"; outS.el.className = "slide";
-  void inS.el.offsetWidth;
-  inS.el.className = "slide track-in";
-  outS.el.className = "slide track-out";
-  active = 1 - active;
-}
-
-function updateMoment() {
-  const t = music.currentTime;
-  let idx = 0;
-  for (let i = 0; i < moments.length; i++) if (t >= moments[i].time) idx = i;
-  showMoment(idx);
-}
-
-/* ============ HATI MELAYANG ============ */
-function spawnHeart() {
-  if (music.paused) return;
-  const h = document.createElement("span");
-  h.className = "heart";
-  h.textContent = Math.random() > .5 ? "♡" : "♥";
-  h.style.left = (Math.random() * 90 + 5) + "vw";
-  h.style.fontSize = (14 + Math.random() * 22) + "px";
-  h.style.setProperty("--rot", ((Math.random() - .5) * 40) + "deg");
-  h.style.setProperty("--drift", ((Math.random() - .5) * 80) + "px");
-  hearts.appendChild(h);
-  setTimeout(() => h.remove(), 7000);
-}
-
-/* ============ PEMUTAR ============ */
-function formatTime(s) {
-  if (!Number.isFinite(s)) return "0:00";
-  return Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
-}
-
-async function startMusic() {
-  try {
-    await music.play();
-    intro.classList.add("hide");
-    miniPlayer.classList.add("show");
-    updateMoment();
-  } catch (e) {
-    alert("Musik belum bisa diputar. Cek apakah file MP3 sudah di-upload dengan nama yang benar.");
-  }
-}
-
-playMain.addEventListener("click", startMusic);
-
-miniPlay.addEventListener("click", async () => {
-  if (music.paused) { try { await music.play(); } catch (e) { alert("Musik belum bisa diputar."); } }
-  else music.pause();
-});
-
-music.addEventListener("play", () => {
-  setIcons(true);
-  clearInterval(heartTimer);
-  heartTimer = setInterval(spawnHeart, 1400);
-});
-music.addEventListener("pause", () => { setIcons(false); clearInterval(heartTimer); });
-music.addEventListener("ended", () => { setIcons(false); clearInterval(heartTimer); });
-
-music.addEventListener("timeupdate", () => {
-  updateMoment();
-  if (music.duration && Number.isFinite(music.duration)) {
-    if (!dragging) {
-      seek.value = music.currentTime / music.duration * 1000;
-      seek.style.setProperty("--p", (music.currentTime / music.duration * 100) + "%");
-    }
-    currentTime.textContent = formatTime(music.currentTime);
-    totalTime.textContent = formatTime(music.duration);
-  }
-});
-music.addEventListener("loadedmetadata", () => { totalTime.textContent = formatTime(music.duration); });
-
-/* ============ BAR & TOMBOL ALA SPOTIFY ============ */
-seek.addEventListener("input", () => {
-  dragging = true;
-  seek.style.setProperty("--p", (seek.value / 10) + "%");
-  if (music.duration) currentTime.textContent = formatTime(seek.value / 1000 * music.duration);
-});
-seek.addEventListener("change", () => {
-  if (music.duration) music.currentTime = seek.value / 1000 * music.duration;
-  dragging = false;
-});
-
-const PLAY_ICON = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-const PAUSE_ICON = '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-
-function setIcons(playing) {
-  const icon = playing ? PAUSE_ICON : PLAY_ICON;
-  const label = playing ? "Jeda" : "Putar";
-  [playMain, miniPlay, playBtn].forEach(b => { b.innerHTML = icon; b.setAttribute("aria-label", label); });
-}
-setIcons(false);
-
-async function togglePlay() {
-  if (music.paused) {
-    if (!intro.classList.contains("hide")) { startMusic(); return; }
-    try { await music.play(); } catch (e) { alert("Musik belum bisa diputar."); }
-  } else music.pause();
-}
-playBtn.addEventListener("click", togglePlay);
-
-function momentIndex() {
-  let idx = 0;
-  for (let i = 0; i < moments.length; i++) if (music.currentTime >= moments[i].time) idx = i;
-  return idx;
-}
-function goPrev() {
-  const i = momentIndex();
-  const target = music.currentTime - moments[i].time > 3 ? moments[i].time : (moments[i - 1] ? moments[i - 1].time : 0);
-  music.currentTime = target;
-}
-function goNext() {
-  const i = momentIndex();
-  music.currentTime = moments[i + 1] ? moments[i + 1].time : 0;
-}
-prevBtn.addEventListener("click", goPrev);
-nextBtn.addEventListener("click", goNext);
-likeBtn.addEventListener("click", () => likeBtn.classList.toggle("on"));
-repeatBtn.addEventListener("click", () => {
-  music.loop = !music.loop;
-  repeatBtn.classList.toggle("on", music.loop);
-});
-
-/* Kontrol di layar kunci / pusat kontrol iPhone */
-if ("mediaSession" in navigator) {
-  navigator.mediaSession.metadata = new MediaMetadata({
-    title: "About You",
-    artist: "The 1975",
-    album: "Memories of Mount Slamet",
-    artwork: [{ src: "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg", sizes: "512x512", type: "image/jpeg" }]
-  });
-  const ms = navigator.mediaSession;
-  ms.setActionHandler("play", () => music.play());
-  ms.setActionHandler("pause", () => music.pause());
-  ms.setActionHandler("previoustrack", goPrev);
-  ms.setActionHandler("nexttrack", goNext);
-  try { ms.setActionHandler("seekto", d => { if (d.seekTime != null) music.currentTime = d.seekTime; }); } catch (e) {}
-}
-
-music.addEventListener("error", () => console.log("Periksa nama dan lokasi file MP3 di repositori."));
-</script>
-
-</body>
-</html>
+  <div>
+    <input class="bar" id="bar" type="range" min="0" max="60" step="0.1" value="0" ar
