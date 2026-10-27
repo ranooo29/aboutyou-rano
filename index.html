@@ -70,4 +70,149 @@ body{background:var(--bg);color:var(--teks);font-family:system-ui,-apple-system,
   </div>
 
   <div>
-    <input class="bar" id="bar" type="range" min="0" max="60" step="0.1" value="0" ar
+    <input class="bar" id="bar" type="range" min="0" max="60" step="0.1" value="0" aria-label="Posisi lagu">
+  </div>
+  <div class="waktu"><span id="now">0:00</span><span id="dur">0:00</span></div>
+
+  <div class="ctrl">
+    <button id="prev" aria-label="Ulangi dari awal"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM9.5 12 18 18V6z"/></svg></button>
+    <button class="main" id="play" aria-label="Putar"><svg id="ikon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+    <button id="next" aria-label="Foto berikutnya"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+  </div>
+
+  <div class="foot">MEMORIES OF MOUNT SLAMET</div>
+</main>
+
+<audio id="audio" src="ssstik.io_1792058518920.mp3" preload="auto" playsinline></audio>
+
+<script>
+/* ====== PENGATURAN ====== */
+const LAGU  = "ssstik.io_1792058518920.mp3";
+const SAMPUL = "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg";
+const JUDUL_PEMBUKA = "Memories of Mount Slamet";
+
+/* Foto + detik mulainya (sesuai pembagian lirik: 0-2, 2-11, 11-17, 17-30, 30-39, 40-44, 44-49, 50-60).
+   Isi "teks" kalau mau ada tulisan di bawah foto. */
+const FOTO = [
+  { src: "motion_photo_4054923047229003049.jpg", mulai: 0,  teks: "" },
+  { src: "motion_photo_1027072367074891503.jpg", mulai: 2,  teks: "" },
+  { src: "file_000000000e6882119543a0ec86ebf88b.png", mulai: 11, teks: "" },
+  { src: "IMG_20261015_175557.jpg", mulai: 17, teks: "" },
+  { src: "IMG_20261015_175454.jpg", mulai: 30, teks: "" },
+  { src: "IMG_20261015_175711.jpg", mulai: 40, teks: "" },
+  { src: "IMG-20260914-WA0053.jpg", mulai: 44, teks: "" },
+  { src: "IMG-20261001-WA0014.jpg", mulai: 50, teks: "" }
+];
+
+/* ====== ELEMEN ====== */
+const $ = id => document.getElementById(id);
+const audio = $("audio"), app = $("app"), stage = $("stage"), cap = $("cap");
+const bar = $("bar"), now = $("now"), dur = $("dur"), ikon = $("ikon");
+audio.src = LAGU;
+stage.style.background = `#1c1c1e url("${SAMPUL}") center/cover`;
+
+const IKON_PLAY  = "M8 5v14l11-7z";
+const IKON_PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
+
+/* Buat elemen foto */
+const imgs = FOTO.map(f => {
+  const im = new Image();
+  im.src = f.src; im.alt = "";
+  im.decoding = "async";
+  stage.insertBefore(im, cap);
+  return im;
+});
+
+/* ====== FOTO MENGIKUTI WAKTU LAGU ====== */
+let idx = -1;
+function cariIdx(t){
+  let i = 0;
+  for (let k = 0; k < FOTO.length; k++) if (t >= FOTO[k].mulai) i = k;
+  return i;
+}
+function tampilFoto(i){
+  if (i === idx) return;
+  if (idx >= 0) imgs[idx].classList.remove("aktif");
+  void imgs[i].offsetWidth;              // ulang animasi masuk + zoom
+  imgs[i].classList.add("aktif");
+  cap.textContent = FOTO[i].teks || "";
+  idx = i;
+}
+
+/* ====== PEMUTAR ====== */
+const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); };
+
+function setPlayUI(main){
+  ikon.innerHTML = `<path d="${main ? IKON_PAUSE : IKON_PLAY}"/>`;
+  $("play").setAttribute("aria-label", main ? "Jeda" : "Putar");
+  app.classList.toggle("paused", !main);   // jeda = animasi ikut berhenti
+}
+
+function mulai(){
+  const p = audio.play();
+  if (p && p.catch) p.catch(() => setPlayUI(false));
+}
+
+$("play").addEventListener("click", () => audio.paused ? mulai() : audio.pause());
+audio.addEventListener("play",  () => setPlayUI(true));
+audio.addEventListener("pause", () => setPlayUI(false));
+audio.addEventListener("ended", () => { audio.currentTime = 0; setPlayUI(false); });
+
+audio.addEventListener("loadedmetadata", () => {
+  if (isFinite(audio.duration)) { bar.max = audio.duration; dur.textContent = fmt(audio.duration); }
+});
+audio.addEventListener("timeupdate", () => {
+  if (!bar.dataset.geser) bar.value = audio.currentTime;
+  now.textContent = fmt(audio.currentTime);
+  tampilFoto(cariIdx(audio.currentTime));
+});
+audio.addEventListener("error", () => {
+  console.error("Lagu tidak bisa dimuat. Cek nama file:", LAGU);
+  now.textContent = "file lagu tidak ketemu";
+});
+
+/* Geser progres */
+bar.addEventListener("input", () => { bar.dataset.geser = 1; now.textContent = fmt(bar.value); });
+bar.addEventListener("change", () => {
+  audio.currentTime = +bar.value;
+  delete bar.dataset.geser;
+  tampilFoto(cariIdx(audio.currentTime));
+});
+
+/* Tombol ulang & berikutnya */
+$("prev").addEventListener("click", () => { audio.currentTime = 0; tampilFoto(0); });
+$("next").addEventListener("click", () => {
+  const n = idx + 1;
+  if (n < FOTO.length) { audio.currentTime = FOTO[n].mulai; tampilFoto(n); }
+});
+
+/* Suka */
+$("love").addEventListener("click", e => e.currentTarget.classList.toggle("on"));
+
+/* Kontrol dari layar kunci / notifikasi Android */
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: "About You", artist: "The 1975",
+    artwork: [{ src: SAMPUL, sizes: "512x512" }]
+  });
+  navigator.mediaSession.setActionHandler("play", mulai);
+  navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+}
+
+/* ====== LAYAR PEMBUKA (ketik, lalu ketuk) ====== */
+const intro = $("intro"), ketik = $("ketik");
+let i = 0;
+(function ketikLagi(){
+  ketik.textContent = JUDUL_PEMBUKA.slice(0, ++i);
+  if (i < JUDUL_PEMBUKA.length) setTimeout(ketikLagi, 70);
+  else intro.classList.add("siap");
+})();
+
+intro.addEventListener("click", () => {
+  intro.classList.add("hilang");
+  tampilFoto(0);
+  mulai();                 // dipanggil langsung dari ketukan, supaya tidak diblokir browser
+}, { once: true });
+</script>
+</body>
+</html>
