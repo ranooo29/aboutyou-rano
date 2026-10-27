@@ -2,45 +2,48 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>About You ♡</title>
 <style>
 :root{--bg:#121212;--panel:#1c1c1e;--teks:#fff;--redup:#a7a7ab;--aksen:#ff6f91}
-*{box-sizing:border-box;margin:0}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
 body{background:var(--bg);color:var(--teks);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;justify-content:center;overflow:hidden}
-.app{width:100%;max-width:420px;height:100dvh;padding:max(16px,env(safe-area-inset-top)) 20px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+.app{width:100%;max-width:420px;height:100dvh;padding:max(16px,env(safe-area-inset-top)) 22px max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px}
 
-/* Panggung foto */
-.stage{position:relative;flex:1;min-height:0;border-radius:18px;overflow:hidden;background:var(--panel)}
+/* Sampul album */
+.cover{width:min(54vw,28dvh);aspect-ratio:1;margin:0 auto;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.5);flex:none}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Judul */
+.info h1{font-size:22px;font-weight:700}
+.info p{color:var(--redup);font-size:15px;margin-top:2px}
+
+/* Progres */
+.bar{width:100%;height:4px;accent-color:#fff;touch-action:none;margin-top:2px}
+.waktu{display:flex;justify-content:space-between;color:var(--redup);font-size:12px;margin-top:-6px}
+
+/* Tombol */
+.ctrl{display:flex;align-items:center;justify-content:space-between}
+.ctrl button{background:none;border:0;color:var(--teks);cursor:pointer;display:grid;place-items:center;padding:6px}
+.ctrl svg{width:28px;height:28px;fill:currentColor}
+.ctrl .main{width:62px;height:62px;border-radius:50%;background:#fff;color:#000;padding:0}
+.ctrl .main svg{width:32px;height:32px}
+.ctrl .redup{color:var(--redup)}
+.ctrl #love.on{color:var(--aksen)}
+
+/* Panggung foto (otomatis, tidak digeser) */
+.stage{position:relative;flex:1;min-height:140px;border-radius:18px;overflow:hidden;background:var(--panel)}
 .stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
 .stage img.aktif{opacity:1;animation:masuk 1.2s ease both,zoom 14s linear both}
 @keyframes masuk{from{opacity:0}to{opacity:1}}
 @keyframes zoom{from{transform:scale(1)}to{transform:scale(1.08)}}
-.cap{position:absolute;left:0;right:0;bottom:0;z-index:999;padding:36px 16px 14px;font-size:17px;line-height:1.35;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.cap{position:absolute;left:0;right:0;bottom:0;z-index:5;padding:30px 16px 12px;font-size:16px;line-height:1.35;text-align:center;background:linear-gradient(transparent,rgba(0,0,0,.65))}
 .cap:empty{display:none}
 
 /* Saat dijeda, semua animasi ikut berhenti */
 .app.paused *{animation-play-state:paused!important}
 
-/* Info lagu */
-.info{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.info h1{font-size:22px;font-weight:700}
-.info p{color:var(--redup);font-size:15px;margin-top:2px}
-.love{background:none;border:0;color:var(--redup);padding:6px;cursor:pointer}
-.love.on{color:var(--aksen)}
-.love.on path{fill:currentColor}
-
-/* Progres */
-.bar{width:100%;height:4px;accent-color:#fff;touch-action:none}
-.waktu{display:flex;justify-content:space-between;color:var(--redup);font-size:12px;margin-top:-6px}
-
-/* Tombol */
-.ctrl{display:flex;align-items:center;justify-content:center;gap:34px}
-.ctrl button{background:none;border:0;color:var(--teks);cursor:pointer;display:grid;place-items:center}
-.ctrl svg{width:30px;height:30px;fill:currentColor}
-.ctrl .main{width:64px;height:64px;border-radius:50%;background:#fff;color:#000}
-.ctrl .main svg{width:32px;height:32px}
 .foot{text-align:center;color:var(--redup);font-size:11px;letter-spacing:.12em}
 
 /* Layar pembuka */
@@ -62,32 +65,31 @@ body{background:var(--bg);color:var(--teks);font-family:system-ui,-apple-system,
 </div>
 
 <main class="app paused" id="app">
-  <div class="stage" id="stage"><div class="cap" id="cap"></div></div>
+  <div class="cover"><img id="sampul" alt="Sampul album"></div>
 
-  <div class="info">
-    <div><h1>About You</h1><p>The 1975</p></div>
-    <button class="love" id="love" aria-label="Suka"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>
-  </div>
+  <div class="info"><h1>About You</h1><p>The 1975</p></div>
 
-  <div>
-    <input class="bar" id="bar" type="range" min="0" max="60" step="0.1" value="0" aria-label="Posisi lagu">
-  </div>
-  <div class="waktu"><span id="now">0:00</span><span id="dur">0:00</span></div>
+  <input class="bar" id="bar" type="range" min="0" max="60" step="0.1" value="0" aria-label="Posisi lagu">
+  <div class="waktu"><span id="now">0:00</span><span id="sisa">-1:00</span></div>
 
   <div class="ctrl">
-    <button id="prev" aria-label="Ulangi dari awal"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM9.5 12 18 18V6z"/></svg></button>
+    <button class="redup" id="vol" aria-label="Bisukan"><svg id="ikonVol" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+    <button id="prev" aria-label="Ulangi dari awal"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg></button>
     <button class="main" id="play" aria-label="Putar"><svg id="ikon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-    <button id="next" aria-label="Foto berikutnya"><svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg></button>
+    <button id="next" aria-label="Foto berikutnya"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
+    <button class="redup" id="love" aria-label="Suka"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M12 21s-7-4.4-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>
   </div>
+
+  <div class="stage" id="stage"><div class="cap" id="cap"></div></div>
 
   <div class="foot">MEMORIES OF MOUNT SLAMET</div>
 </main>
 
-<audio id="audio" src="ssstik.io_1792058518920.mp3" preload="auto" playsinline></audio>
+<audio id="audio" preload="auto" playsinline></audio>
 
 <script>
 /* ====== PENGATURAN ====== */
-const LAGU  = "ssstik.io_1792058518920.mp3";
+const LAGU   = "ssstik.io_1792058518920.mp3";
 const SAMPUL = "IMG_4933a98d-48e0-4853-9dab-3b19c5e57086.jpg";
 const JUDUL_PEMBUKA = "Memories of Mount Slamet";
 
@@ -107,18 +109,19 @@ const FOTO = [
 /* ====== ELEMEN ====== */
 const $ = id => document.getElementById(id);
 const audio = $("audio"), app = $("app"), stage = $("stage"), cap = $("cap");
-const bar = $("bar"), now = $("now"), dur = $("dur"), ikon = $("ikon");
+const bar = $("bar"), now = $("now"), sisa = $("sisa"), ikon = $("ikon"), ikonVol = $("ikonVol");
 audio.src = LAGU;
-stage.style.background = `#1c1c1e url("${SAMPUL}") center/cover`;
+$("sampul").src = SAMPUL;
 
 const IKON_PLAY  = "M8 5v14l11-7z";
 const IKON_PAUSE = "M6 5h4v14H6zM14 5h4v14h-4z";
+const VOL_ON  = "M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z";
+const VOL_OFF = "M16.5 12A4.5 4.5 0 0 0 14 7.97v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.8 8.8 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3 3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4 9.91 6.09 12 8.18V4z";
 
 /* Buat elemen foto */
 const imgs = FOTO.map(f => {
   const im = new Image();
-  im.src = f.src; im.alt = "";
-  im.decoding = "async";
+  im.src = f.src; im.alt = ""; im.decoding = "async";
   stage.insertBefore(im, cap);
   return im;
 });
@@ -141,6 +144,12 @@ function tampilFoto(i){
 
 /* ====== PEMUTAR ====== */
 const fmt = s => { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s/60) + ":" + String(s%60).padStart(2,"0"); };
+const total = () => (isFinite(audio.duration) ? audio.duration : 60);
+
+function tampilWaktu(t){
+  now.textContent = fmt(t);
+  sisa.textContent = "-" + fmt(Math.ceil(total() - t));
+}
 
 function setPlayUI(main){
   ikon.innerHTML = `<path d="${main ? IKON_PAUSE : IKON_PLAY}"/>`;
@@ -159,11 +168,12 @@ audio.addEventListener("pause", () => setPlayUI(false));
 audio.addEventListener("ended", () => { audio.currentTime = 0; setPlayUI(false); });
 
 audio.addEventListener("loadedmetadata", () => {
-  if (isFinite(audio.duration)) { bar.max = audio.duration; dur.textContent = fmt(audio.duration); }
+  if (isFinite(audio.duration)) bar.max = audio.duration;
+  tampilWaktu(audio.currentTime);
 });
 audio.addEventListener("timeupdate", () => {
   if (!bar.dataset.geser) bar.value = audio.currentTime;
-  now.textContent = fmt(audio.currentTime);
+  tampilWaktu(audio.currentTime);
   tampilFoto(cariIdx(audio.currentTime));
 });
 audio.addEventListener("error", () => {
@@ -172,21 +182,23 @@ audio.addEventListener("error", () => {
 });
 
 /* Geser progres */
-bar.addEventListener("input", () => { bar.dataset.geser = 1; now.textContent = fmt(bar.value); });
+bar.addEventListener("input", () => { bar.dataset.geser = 1; tampilWaktu(+bar.value); });
 bar.addEventListener("change", () => {
   audio.currentTime = +bar.value;
   delete bar.dataset.geser;
   tampilFoto(cariIdx(audio.currentTime));
 });
 
-/* Tombol ulang & berikutnya */
+/* Tombol */
 $("prev").addEventListener("click", () => { audio.currentTime = 0; tampilFoto(0); });
 $("next").addEventListener("click", () => {
   const n = idx + 1;
   if (n < FOTO.length) { audio.currentTime = FOTO[n].mulai; tampilFoto(n); }
 });
-
-/* Suka */
+$("vol").addEventListener("click", () => {
+  audio.muted = !audio.muted;
+  ikonVol.innerHTML = `<path d="${audio.muted ? VOL_OFF : VOL_ON}"/>`;
+});
 $("love").addEventListener("click", e => e.currentTarget.classList.toggle("on"));
 
 /* Kontrol dari layar kunci / notifikasi Android */
